@@ -2,8 +2,10 @@ package ca.ualberta.cs.lonelytwitter;
 
 import java.util.Date;
 
-/**
- * Created by romansky on 1/12/16.
+/** The important tweet class
+ *
+ *
+ * @author schuman
  */
 public class ImportantTweet extends Tweet implements Tweetable {
     @Override

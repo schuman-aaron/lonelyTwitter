@@ -24,6 +24,16 @@ import android.widget.ListView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+/**
+ * The main activity, it initializes all of the views.
+ * <p>
+ * This app allows the user to create, send, and view tweets that
+ * the user themselves have made. The sent tweets are persistent,
+ * so after the user closes the app and opens it back up again
+ * the sent tweets are not lost.
+ *
+ */
+
 public class LonelyTwitterActivity extends Activity {
 
 	private static final String FILENAME = "file.sav";
@@ -72,6 +82,17 @@ public class LonelyTwitterActivity extends Activity {
 		oldTweetsList.setAdapter(adapter);
 	}
 
+    /**
+     * Opens a file named <code>FILENAME</code> and saves it in the
+     * tweets array using gson.
+     *
+     * @exception   FileNotFoundException
+     *              If the tweets array has not been initialized, then the method
+     *              initializes it.
+     * @exception   IOException
+     *              If some unforeseen catastrophic event happens, an error is thrown.
+     *
+      */
 	private void loadFromFile() {
 		try {
 			FileInputStream fis = openFileInput(FILENAME);
@@ -90,7 +111,17 @@ public class LonelyTwitterActivity extends Activity {
 			throw new RuntimeException();
 		}
 	}
-	
+
+    /**
+     * Saves the tweet data that has been created during run-time to the file named
+     * <code>FILENAME</code> using gson.
+     *
+     * @exception   FileNotFoundException
+     *              Somehow the file that was supposed to have been initialized
+     *              does not exist.
+     * @exception   IOException
+     *              If some unforeseen catastrophic event happens, an error is thrown.
+     */
 	private void saveInFile() {
 		try {
 			FileOutputStream fos = openFileOutput(FILENAME,
