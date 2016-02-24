@@ -2,6 +2,8 @@ package ca.ualberta.cs.lonelytwitter;
 
 import java.util.Date;
 
+import io.searchbox.annotations.JestId;
+
 /**
  * Created by romansky on 1/12/16.
  */
@@ -32,6 +34,17 @@ public abstract class Tweet {
     public String getMessage() {
         return this.message;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @JestId
+    protected String id;
 
     public void setMessage(String message) throws TweetTooLongException {
         if (message.length() > 140) {

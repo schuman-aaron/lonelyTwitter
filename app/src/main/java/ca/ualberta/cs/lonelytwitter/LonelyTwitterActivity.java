@@ -1,6 +1,7 @@
 package ca.ualberta.cs.lonelytwitter;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -21,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class LonelyTwitterActivity extends Activity {
 
@@ -45,23 +47,41 @@ public class LonelyTwitterActivity extends Activity {
 
         bodyText = (EditText) findViewById(R.id.body);
         Button saveButton = (Button) findViewById(R.id.save);
+        Button searchButton = (Button) findViewById(R.id.search);
         oldTweetsList = (ListView) findViewById(R.id.oldTweetsList);
 
         saveButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
                 String text = bodyText.getText().toString();
-                Tweet latestTweet = new NormalTweet(text);
+                NormalTweet latestTweet = new NormalTweet(text);
 
                 tweets.add(latestTweet);
                 adapter.notifyDataSetChanged();
 
                 // TODO: Replace with Elasticsearch
-                saveInFile();
+                final AsyncTask<NormalTweet, Void, Void> execute = new ElasticsearchTweetController.AddTweetTask();
+                execute.execute(latestTweet);
 
                 setResult(RESULT_OK);
             }
         });
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+
+                    public void onClick(View v){
+                        String text = bodyText.getText().toString();
+
+                        //tweets.add(latestTweet);
+                        //adapter.notifyDataSetChanged();
+
+                        // TODO: Replace with Elasticsearch
+                        final ElasticsearchTweetController.SearchTweetsTask execute = new ElasticsearchTweetController.SearchTweetsTask(bodyText);
+                        execute.execute(text);
+
+                        setResult(RESULT_OK);
+                    }
+                });
     }
 
     @Override
@@ -70,7 +90,16 @@ public class LonelyTwitterActivity extends Activity {
 
         // Get latest tweets
         // TODO: Replace with Elasticsearch
-        loadFromFile();
+        ElasticsearchTweetController.GetTweetsTask getTweetsTask = new ElasticsearchTweetController.GetTweetsTask();
+        try {
+            getTweetsTask.execute("");
+            tweets = getTweetsTask.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        //loadFromFile();
 
         // Binds tweet list with view, so when our array updates, the view updates with it
         adapter = new ArrayAdapter<Tweet>(this, R.layout.list_item, tweets);
