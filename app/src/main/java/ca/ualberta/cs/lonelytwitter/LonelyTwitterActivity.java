@@ -3,7 +3,6 @@ package ca.ualberta.cs.lonelytwitter;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -74,6 +73,23 @@ public class LonelyTwitterActivity extends Activity {
                 ElasticsearchTweetController.AddTweetTask addTweetTask = new ElasticsearchTweetController.AddTweetTask();
                 addTweetTask.execute(latestTweet);
 
+                ElasticsearchTweetController.GetTweetsTask getTweetsTask = new ElasticsearchTweetController.GetTweetsTask();
+                getTweetsTask.execute("");
+
+                ArrayList<NormalTweet> tweetArrayList = new ArrayList<NormalTweet>();
+
+                try {
+                    tweetArrayList = getTweetsTask.get();
+                    tweets.clear();
+                    tweets.addAll(tweetArrayList);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+                adapter.notifyDataSetChanged();
+
                 bodyText.setText("");
                 pictureButton.setImageResource(android.R.color.transparent);
                 thumbnail = null;
@@ -81,6 +97,7 @@ public class LonelyTwitterActivity extends Activity {
                 setResult(RESULT_OK);
             }
         });
+
     }
 
     @Override
@@ -89,7 +106,6 @@ public class LonelyTwitterActivity extends Activity {
 
         // Get the latest tweets from Elasticsearch
         ElasticsearchTweetController.GetTweetsTask getTweetsTask = new ElasticsearchTweetController.GetTweetsTask();
-//        getTweetsTask.execute("test");
         getTweetsTask.execute("");
         try {
             tweets = new ArrayList<Tweet>();

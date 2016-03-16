@@ -98,4 +98,6 @@ public abstract class Tweet {
         }
         return thumbnail;
     }
+
+    abstract int compareTo(Tweet tweet);
 }

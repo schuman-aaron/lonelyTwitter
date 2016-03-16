@@ -26,4 +26,9 @@ public class ImportantTweet extends Tweet implements Tweetable {
     public String getMessage() {
         return "!IMPORTANT! " + this.message;
     }
+
+    @Override
+    int compareTo(Tweet tweet) {
+        return 0;
+    }
 }
